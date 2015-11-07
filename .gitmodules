@@ -1,0 +1,3 @@
+[submodule "wipy/uDS3231"]
+	path = wipy/uDS3231
+	url = git@github.com:scudderfish/uDS3231.git
