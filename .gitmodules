@@ -1,6 +1,0 @@
-[submodule "wipy/uDS3231"]
-	path = wipy/uDS3231
-	url = git@github.com:scudderfish/uDS3231.git
-[submodule "wipy/simple-websocket-server"]
-	path = wipy/simple-websocket-server
-	url = git@github.com:scudderfish/simple-websocket-server.git
