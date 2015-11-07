@@ -219,4 +219,3 @@ def test(gnd, dat, vdd):
     print('devices:', ds.roms)
     print('temperatures:', ds.read_temps())
 
-test('GP1', 'GP2', 'GP3')
