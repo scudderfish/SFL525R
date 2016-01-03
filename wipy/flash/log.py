@@ -9,6 +9,7 @@ import time
 
 # Set the time according to the real RTC
 uDS3231.DS3231().loadTime()
+running=True
 
 def safeMkdir(path):
     pass
@@ -16,6 +17,8 @@ def safeMkdir(path):
 def ba2hex(ba):
     return ''.join('{:02x}'.format(x) for x in ba)
 
+def finish(pin):
+    running=False
 # clk cmd and dat0 pins must be passed along with
 # their respective alternate functions
 sd = machine.SD(pins=('GP10', 'GP11', 'GP15'))
@@ -24,14 +27,18 @@ dataPin=machine.Pin('GP30')
 ow = OneWire(dataPin)
 ds=FDS18X20.FDS1820(ow)
 
-path='/sd/data/'+'-'.join(map(str,time.localtime()))+'.csv'
+powerPin=machine.Pin('GP16', mode=Pin.IN, pull=Pin.PULL_DOWN) #High when we should be switched on
+livePin=machine.Pin('GP17', mode=Pin.OUT) #Held high whilst we want to run
+livePin.value(1)
+powerPin.irq(mode=Pin.IRQ_RISING,handler=finish)
 
+path='/sd/data/'+'-'.join(map(str,time.localtime()))+'.csv'
 print ('Writing to '+path)
 with open(path,'w') as f:
     f.write('Time,')
     f.write(','.join(map(ba2hex,ds.roms)))
     f.write('\n')
-    for x in range(1,1000):
+    while running:
         temps = ds.read_temps()
         print(temps)
         f.write(str(time.time()))
@@ -39,3 +46,4 @@ with open(path,'w') as f:
         f.write(','.join(map(str,temps)))
         f.write('\n')
         f.flush()
+    f.close()
